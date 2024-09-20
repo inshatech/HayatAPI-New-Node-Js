@@ -9,6 +9,7 @@ const bedRouter = require('./routes/bedRouter.js');
 const dischargeRouter = require('./routes/dischargeRouter.js');
 const fitnessRouter = require('./routes/fitnessRouter.js');
 const patientRouter = require('./routes/patientRouter.js');
+const medicineLibraryRouter = require('./routes/medicineLibraryRouter.js');
 
 
 // Configuration
@@ -37,6 +38,7 @@ app.use('/back-office', bedRouter);
 app.use('/back-office', dischargeRouter);
 app.use('/back-office', fitnessRouter);
 app.use('/back-office', patientRouter);
+app.use('/back-office', medicineLibraryRouter);
 
 
 

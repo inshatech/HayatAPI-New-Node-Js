@@ -1,16 +1,16 @@
-const Patient = require("../models/patientModel");
+const MedicineLibrary = require("../models/medicineLibraryModel");
 
 const create = async (query) => {
   try {
-    // Check if a bed with the same name already exists
-    const existingPatient = await Patient.findOne({ mobile: query.mobile, doctor: query.doctor});
-    if (existingPatient) {
-      return { success: false, message: 'Mobile no is already exists' };
+    // Check if a medicineLibrary with the same name already exists
+    const existingMedicineLibrary = await MedicineLibrary.findOne({ name: query.name, doctor: query.doctor });
+    if (existingMedicineLibrary) {
+      return { success: false, message: 'Record is already exists' };
     }
 
-    // Create a new bed if no existing bed is found
-    const addPatient = new Patient(query);
-    let response = await addPatient.save();
+    // Create a new medicineLibrary if no existing medicine Library is found
+    const addMedicineLibrary = new MedicineLibrary(query);
+    let response = await addMedicineLibrary.save();
     response = response.toObject();
     return { success: true, message: 'Record created successfully', data: response };
   } catch (error) {
@@ -18,9 +18,10 @@ const create = async (query) => {
   }
 }
 
+
 const findOne = async (query) => {
   try {
-    const response = await Patient.findOne(query);
+    const response = await MedicineLibrary.findOne(query);
     if (!response) {
       return { success: false, message: 'Record not found' };
     }
@@ -32,25 +33,22 @@ const findOne = async (query) => {
 
 const findAll = async (query) => {
   try {
-    const response = await Patient.find(query);
+    const response = await MedicineLibrary.find(query);
+    
     if (response.length === 0) {
-      return { success: false, message: "Record not found" };
-    }    
-    return { 
-      success: true, 
-      data: response 
-    };
+      return { success: false, message: "No records found" };
+    }
+    
+    return { success: true, data: response };
   } catch (error) {
-    return { 
-      success: false, 
-      message: error.message 
-    };
+    return { success: false, message: error.message };
   }
 };
 
+
 const findByIdAndDelete = async (query) => {
   try {
-    const response = await Patient.findByIdAndDelete(query);
+    const response = await MedicineLibrary.findByIdAndDelete(query);
     if (!response) {
       return { success: false, message: 'Record not found or already deleted' };
     }
@@ -62,7 +60,7 @@ const findByIdAndDelete = async (query) => {
 
 const findOneAndUpdate = async (_id, query) => {
   try {
-    const response = await Patient.findOneAndUpdate({ _id }, query, { new: true });
+    const response = await MedicineLibrary.findOneAndUpdate({ _id }, query, { new: true });
     if (!response) {
       return { success: false, message: 'Record not found' };
     }
@@ -74,7 +72,7 @@ const findOneAndUpdate = async (_id, query) => {
 
 const updateMany = async (where, query) => {
   try {
-    const response = await Patient.updateMany(where, query);
+    const response = await MedicineLibrary.updateMany(where, query);
     return { success: true, message: 'Records updated successfully', data: response };
   } catch (error) {
     return { success: false, message: error.message };
@@ -87,4 +85,5 @@ module.exports = {
   findAll,
   findByIdAndDelete,
   findOneAndUpdate,
-}
+  updateMany
+};

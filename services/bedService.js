@@ -12,7 +12,7 @@ const create = async (query) => {
     const addBed = new Bed(query);
     let response = await addBed.save();
     response = response.toObject();
-    return { success: true, message: 'Bed created successfully', data: response };
+    return { success: true, message: 'Record created successfully', data: response };
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -23,7 +23,7 @@ const findOne = async (query) => {
   try {
     const response = await Bed.findOne(query);
     if (!response) {
-      return { success: false, message: 'Bed not found' };
+      return { success: false, message: 'Record not found' };
     }
     return { success: true, data: response };
   } catch (error) {
@@ -50,9 +50,9 @@ const findByIdAndDelete = async (query) => {
   try {
     const response = await Bed.findByIdAndDelete(query);
     if (!response) {
-      return { success: false, message: 'Bed not found or already deleted' };
+      return { success: false, message: 'Record not found or already deleted' };
     }
-    return { success: true, message: 'Bed deleted successfully' };
+    return { success: true, message: 'Record deleted successfully' };
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -62,9 +62,9 @@ const findOneAndUpdate = async (_id, query) => {
   try {
     const response = await Bed.findOneAndUpdate({ _id }, query, { new: true });
     if (!response) {
-      return { success: false, message: 'Bed not found' };
+      return { success: false, message: 'Record not found' };
     }
-    return { success: true, message: 'Bed updated successfully', data: response };
+    return { success: true, message: 'Record updated successfully', data: response };
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -73,7 +73,7 @@ const findOneAndUpdate = async (_id, query) => {
 const updateMany = async (where, query) => {
   try {
     const response = await Bed.updateMany(where, query);
-    return { success: true, message: 'Beds updated successfully', data: response };
+    return { success: true, message: 'Records updated successfully', data: response };
   } catch (error) {
     return { success: false, message: error.message };
   }

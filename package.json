@@ -1,7 +1,7 @@
 {
-  "name": "hayatapi_new",
+  "name": "hayat_api_nodejs",
   "version": "1.0.0",
-  "description": "Hospital Managment Application",
+  "description": "Hospital Management Application",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

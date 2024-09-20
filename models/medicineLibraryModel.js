@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const User = require('./userModel');
 
 const medicineLibrarySchema = new mongoose.Schema({
-  med_name: {
+  name: {
     type: String,
     required: true,
   },
-  med_type: {
+  type: {
     type: String,
     required: true,
   },
