@@ -1,7 +1,14 @@
 const MedicineLibrary = require("../models/medicineLibraryModel");
+const User = require("../models/userModel");
 
 const create = async (query) => {
   try {
+    // Check if a User with the same name already exists
+    const existingUser = await User.findOne({ _id: query.doctor });
+    if (!existingUser.designation === 'doctor') {
+      return { success: false, message: `Access permission denied!` };
+    }
+
     // Check if a medicineLibrary with the same name already exists
     const existingMedicineLibrary = await MedicineLibrary.findOne({ name: query.name, doctor: query.doctor });
     if (existingMedicineLibrary) {

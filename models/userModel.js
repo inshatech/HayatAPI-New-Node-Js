@@ -32,10 +32,9 @@ const usersSchema = new mongoose.Schema({
     default: 'admin',
     required: true,
   },
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'blocked'],
-    default: 'active',
+  isActive: {
+    type: Boolean,
+    default: true,
     required: true,
   },
   image: {
@@ -43,7 +42,7 @@ const usersSchema = new mongoose.Schema({
   },
   designation: {
     type: String,
-    enum: ['doctor', 'manager', 'staff'],
+    enum: ['doctor', 'manager', 'staff', 'administrator'],
     default: '',
   }
 });
