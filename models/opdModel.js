@@ -49,11 +49,21 @@ const opdSchema = new mongoose.Schema({
   transaction_type: {
     type: String,
     enum: ['cash', 'online'],
+    default: 'cash',
     required: true
   },
-  t_amount:{
+  payment_status: {
+    type: String,
+    enum: ['paid', 'refunded',],
+    default: 'paid',
+    required: true
+  },
+  total_amount:{
     type: Number,
     required: true,
+  },
+  notes:{
+    type: String,
   },
   staff: {
     type: mongoose.Schema.Types.ObjectId,

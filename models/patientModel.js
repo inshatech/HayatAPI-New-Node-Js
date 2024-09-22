@@ -45,6 +45,9 @@ const patientSchema = new mongoose.Schema({
   address: {
     type: String,
   },
+  notes:{
+    type: String,
+  },
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

@@ -31,6 +31,9 @@ const ipdSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  notes:{
+    type: String,
+  },
   staff: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

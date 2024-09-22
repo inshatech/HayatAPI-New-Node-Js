@@ -44,6 +44,9 @@ const fitnessSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  notes:{
+    type: String,
+  },
   staff: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

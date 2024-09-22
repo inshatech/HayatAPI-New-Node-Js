@@ -35,7 +35,7 @@ const medicineLibrarySchema = new mongoose.Schema({
   generic_name: {
     type: String,
   },
-  note: {
+  notes: {
     type: String,
   },
   doctor: {

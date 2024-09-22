@@ -44,6 +44,9 @@ const billSchema = new mongoose.Schema({
     required: true,
     min: 0,  
   },
+  notes:{
+    type: String,
+  },
   staff: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
