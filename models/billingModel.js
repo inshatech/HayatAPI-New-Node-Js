@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Patient = require('./patientModel');
 const User = require('./userModel');
 
-const billSchema = new mongoose.Schema({
+const billingSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
@@ -59,6 +59,6 @@ const billSchema = new mongoose.Schema({
   },
 });
 
-const Bill = mongoose.model('Bill', billSchema);
+const Billing = mongoose.model('Billing', billingSchema);
 
-module.exports = Bill;
+module.exports = Billing;

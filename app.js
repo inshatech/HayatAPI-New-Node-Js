@@ -11,6 +11,10 @@ const patientRouter = require('./routes/patientRouter.js');
 const medicineLibraryRouter = require('./routes/medicineLibraryRouter.js');
 const userRouter = require('./routes/userRouter.js');
 const opdRouter = require('./routes/opdRouter.js');
+const whatsAppRouter = require('./routes/whatsAppRouter.js');
+const bedHistoryRouter = require('./routes/bedHistoryRouter.js');
+const ipdRouter = require('./routes/ipdRouter.js');
+const billingRouter = require('./routes/ipdRouter.js');
 
 // Configuration
 dotenv.config();
@@ -68,6 +72,11 @@ app.use('/back-office', patientRouter);
 app.use('/back-office', medicineLibraryRouter);
 app.use('/back-office', userRouter);
 app.use('/back-office', opdRouter);
+app.use('/back-office', ipdRouter);
+app.use('/back-office', billingRouter);
+app.use('/back-office', bedHistoryRouter);
+
+app.use('/back-office', whatsAppRouter);
 
 // Handle unhandled routes
 app.use((req, res, next) => {

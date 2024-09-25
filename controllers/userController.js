@@ -20,8 +20,8 @@ const createUserRecord = async (req, res) => {
     if (result.success) {
       const message = registrationTemplate(password);
       const messageSend = await whatsApp.send(query.mobile, message, query.name)
-      const sendEmail = await sendAccountDetails(password, query.mobile, query.email, query.name)
-      return res.status(201).json({ ...result, status: { whatsApp: messageSend.status, email: sendEmail.response } });
+      //const sendEmail = await sendAccountDetails(password, query.mobile, query.email, query.name)
+      return res.status(201).json({ ...result, status: { whatsApp: messageSend.status }});
     } else {
       return res.status(400).json(result);
     }

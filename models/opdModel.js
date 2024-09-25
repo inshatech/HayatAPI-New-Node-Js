@@ -4,11 +4,11 @@ const User = require('./userModel');
 
 const opdSchema = new mongoose.Schema({
   srNo: {
-    type: String,
-    required: true,
+    type: Number,
   },
   date: {
     type: Date,
+    default: Date.now, // Automatically set to current date and time
     required: true,
   },
   patient: {
@@ -17,7 +17,7 @@ const opdSchema = new mongoose.Schema({
     required: true,
   },
   services: {
-    type: Object,
+    type: Array,
     default: {}
   },
   complaints: {
@@ -54,15 +54,15 @@ const opdSchema = new mongoose.Schema({
   },
   payment_status: {
     type: String,
-    enum: ['paid', 'refunded',],
+    enum: ['paid', 'refunded'],
     default: 'paid',
     required: true
   },
-  total_amount:{
+  total_amount: {
     type: Number,
     required: true,
   },
-  notes:{
+  notes: {
     type: String,
   },
   staff: {
@@ -75,6 +75,29 @@ const opdSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+},
+  {
+    timestamps: true
+  }
+);
+
+// Pre-save hook to set the `srNo`
+opdSchema.pre('save', async function (next) {
+  const opd = this;
+  const startOfDay = new Date(opd.date.setHours(0, 0, 0, 0));
+
+  // Find the last entry of the day
+  const lastOpd = await mongoose.model('OPD').findOne({
+    date: { $gte: startOfDay }
+  }).sort({ srNo: -1 });
+
+  if (lastOpd) {
+    opd.srNo = lastOpd.srNo + 1;
+  } else {
+    opd.srNo = 1;
+  }
+
+  next();
 });
 
 const OPD = mongoose.model('OPD', opdSchema);

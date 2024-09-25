@@ -1,19 +1,6 @@
 const mongoose = require('mongoose');
-const User = require('./userModel');
 
-// Helper function to increment alphabetical sequences (e.g., 'A' to 'Z', then 'AA' to 'AZ', etc.)
-function incrementAlphaSequence(prefix) {
-  let lastChar = prefix.slice(-1);
-  let base = prefix.slice(0, -1);
-  
-  if (lastChar === 'Z') {
-    return base ? incrementAlphaSequence(base) + 'A' : 'AA';
-  } else {
-    return base + String.fromCharCode(lastChar.charCodeAt(0) + 1);
-  }
-}
-
-// Define the Patient schema
+// Define the patient schema
 const patientSchema = new mongoose.Schema({
   uhid: {
     type: String,
@@ -45,7 +32,7 @@ const patientSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  notes:{
+  notes: {
     type: String,
   },
   doctor: {
@@ -55,43 +42,40 @@ const patientSchema = new mongoose.Schema({
   },
 });
 
-// Pre-save hook to generate UHID before saving a patient document
+// Function to generate the next UHID based on last UHID
+const getNextUHID = async (doctorId) => {
+  const lastPatient = await mongoose.model('Patient').findOne({ doctor: doctorId }).sort({ uhid: -1 });
+
+  if (!lastPatient) {
+    return 'A0001'; // Start from A0001 if no previous UHID
+  }
+
+  let lastUHID = lastPatient.uhid;
+  let prefix = lastUHID.charAt(0); // A, B, C, etc.
+  let number = parseInt(lastUHID.substring(1)); // Extract number part
+
+  if (number < 9999) {
+    number++;
+  } else {
+    prefix = String.fromCharCode(prefix.charCodeAt(0) + 1); // Increment the prefix (A -> B -> C)
+    number = 1; // Reset the number part to 0001
+  }
+
+  const nextUHID = `${prefix}${number.toString().padStart(4, '0')}`; // Format the next UHID
+  return nextUHID;
+};
+
+// Middleware to set UHID before saving
 patientSchema.pre('save', async function (next) {
   if (!this.uhid) {
-    // Get the doctor's first letter
-    const doctor = await mongoose.model('User').findById(this.doctor);
-    const doctorInitial = doctor.name[0].toUpperCase(); // Get the first letter of the doctor's name
-
-    // Find the last patient for this doctor to get the last UHID
-    const lastPatient = await this.constructor.findOne({ uhid: { $regex: `^${doctorInitial}-` } }).sort({ uhid: -1 });
-
-    let newUHID;
-    if (lastPatient && lastPatient.uhid) {
-      // Extract the alpha prefix and number from the last UHID
-      const lastUHID = lastPatient.uhid;
-      const [_, alphaPrefix, numberPart] = lastUHID.match(/^([A-Z]+)-([0-9]{4})$/);
-
-      let number = parseInt(numberPart, 10) + 1;
-
-      // Check if we need to reset the number and increment the alpha prefix
-      if (number > 9999) {
-        number = 1;
-        newUHID = `${doctorInitial}-${incrementAlphaSequence(alphaPrefix)}0001`;
-      } else {
-        newUHID = `${doctorInitial}-${alphaPrefix}${String(number).padStart(4, '0')}`;
-      }
-    } else {
-      // If no previous UHID exists for this doctor, start from 'A0001'
-      newUHID = `${doctorInitial}-A0001`;
+    try {
+      this.uhid = await getNextUHID(this.doctor); // Assign the next UHID based on the doctor
+    } catch (error) {
+      return next(error);
     }
-
-    // Assign the new UHID to the patient
-    this.uhid = newUHID;
   }
   next();
 });
 
-// Create the Patient model
 const Patient = mongoose.model('Patient', patientSchema);
-
 module.exports = Patient;

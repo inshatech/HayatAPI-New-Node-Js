@@ -6,8 +6,6 @@ const validateCreatePatient = [
   body('age').notEmpty().withMessage('Age is required'),
   body('sex').notEmpty().withMessage('Gender is required'),
   body('city').notEmpty().withMessage('City is required'),
-  body('total_amount').notEmpty().withMessage('Total Amount is required'),
-  body('staff').notEmpty().withMessage('Staff id is required'),
   body('doctor').notEmpty().withMessage('Doctor id is required'),
 ];
 

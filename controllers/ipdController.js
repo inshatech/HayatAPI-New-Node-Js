@@ -1,56 +1,8 @@
-const opdService = require('../services/opdService');
+const ipdService = require('../services/ipdService');
 const patientService = require('../services/patientService');
 const userService = require('../services/userService');
-// const createOPDRecord = async (req, res) => {
-//   try {
-//     const query = req.body;
 
-//     // Check Doctor
-//     const doctorResponse = await userService.findOne({ _id: query.doctor });
-//     const existingUser = doctorResponse.data
-//     if (!existingUser || !existingUser.designation || existingUser.designation !== 'doctor') {
-//       return res.status(400).json({ success: false, message: 'Please select doctor and try again' });
-//     }
-
-//     // Checking patient id is available??
-//     if (!query.patient) {
-
-//       // Check patient is already available??
-//       const patientResponse = await patientService.findOne({ mobile: query.mobile, doctor: query.doctor });
-//       const existingPatient = patientResponse.data;
-//       if (existingPatient) {
-//         return res.status(400).json({ success: false, message: 'Patient is already registered' });
-//       }
-
-//       // Declare the patient Information
-//       const patient = {
-//         name: query.name,
-//         mobile: query.mobile,
-//         age: query.age,
-//         sex: query.sex,
-//         city: query.city,
-//         doctor: query.doctor
-//       }
-
-//       // Add new patient;
-//       const response = await patientService.create(patient);
-//       console.log(response)
-//       query.patient = response.data._id;
-//     }
-
-//     // Add new OPD
-//     const result = await opdService.create(query);
-//     if (result.success) {
-//       return res.status(201).json(result);
-//     } else {
-//       return res.status(400).json(result);
-//     }
-//   } catch (error) {
-//     return res.status(500).json({ success: false, message: error.message });
-//   }
-// }
-
-const createOPDRecord = async (req, res) => {
+const createIPDRecord = async (req, res) => {
   try {
     const { doctor, mobile, name, age, sex, city, patient } = req.body;
 
@@ -95,12 +47,12 @@ const createOPDRecord = async (req, res) => {
       req.body.patient = patientCreationResponse.data._id;
     }
 
-    // Create new OPD record
-    const opdResponse = await opdService.create(req.body);
-    if (opdResponse.success) {
-      return res.status(201).json(opdResponse);
+    // Create new IPD record
+    const ipdResponse = await ipdService.create(req.body);
+    if (ipdResponse.success) {
+      return res.status(201).json(ipdResponse);
     } else {
-      return res.status(400).json({ success: false, message: 'Failed to create OPD record' });
+      return res.status(400).json({ success: false, message: 'Failed to create IPD record' });
     }
 
   } catch (error) {
@@ -110,10 +62,10 @@ const createOPDRecord = async (req, res) => {
 };
 
 
-const getOPDRecord = async (req, res) => {
+const getIPDRecord = async (req, res) => {
   try {
-    const query = req.params.id; // Assuming you use params to identify the opd record
-    const result = await opdService.findOne({ _id: query });
+    const query = req.params.id; // Assuming you use params to identify the ipd record
+    const result = await ipdService.findOne({ _id: query });
     if (result.success) {
       return res.status(200).json(result);
     } else {
@@ -124,10 +76,10 @@ const getOPDRecord = async (req, res) => {
   }
 }
 
-const getAllOPDRecords = async (req, res) => {
+const getAllIPDRecords = async (req, res) => {
   try {
     const query = req.query; // Assuming query parameters for filtering
-    const result = await opdService.findAll(query);
+    const result = await ipdService.findAll(query);
     if (result.success) {
       return res.status(200).json(result);
     } else {
@@ -138,11 +90,11 @@ const getAllOPDRecords = async (req, res) => {
   }
 }
 
-const updateOPDRecord = async (req, res) => {
+const updateIPDRecord = async (req, res) => {
   try {
     const _id = req.params.id; // Assuming the ID is passed as a URL parameter
     const query = req.body;
-    const result = await opdService.findOneAndUpdate(_id, query);
+    const result = await ipdService.findOneAndUpdate(_id, query);
     if (result.success) {
       return res.status(200).json(result);
     } else {
@@ -153,10 +105,10 @@ const updateOPDRecord = async (req, res) => {
   }
 }
 
-const deleteOPDRecord = async (req, res) => {
+const deleteIPDRecord = async (req, res) => {
   try {
     const _id = req.params.id;
-    const result = await opdService.findByIdAndDelete(_id);
+    const result = await ipdService.findByIdAndDelete(_id);
     if (result.success) {
       return res.status(200).json(result);
     } else {
@@ -167,11 +119,11 @@ const deleteOPDRecord = async (req, res) => {
   }
 }
 
-const updateMultipleOPDRecords = async (req, res) => {
+const updateMultipleIPDRecords = async (req, res) => {
   try {
     const where = req.body.where; // The condition for selecting records
     const query = req.body.query; // The update data
-    const result = await opdService.updateMany(where, query);
+    const result = await ipdService.updateMany(where, query);
     if (result.success) {
       return res.status(200).json(result);
     } else {
@@ -183,10 +135,10 @@ const updateMultipleOPDRecords = async (req, res) => {
 }
 
 module.exports = {
-  createOPDRecord,
-  getOPDRecord,
-  getAllOPDRecords,
-  updateOPDRecord,
-  deleteOPDRecord,
-  updateMultipleOPDRecords
+  createIPDRecord,
+  getIPDRecord,
+  getAllIPDRecords,
+  updateIPDRecord,
+  deleteIPDRecord,
+  updateMultipleIPDRecords
 }
