@@ -5,6 +5,7 @@ const User = require('./userModel');
 const billingSchema = new mongoose.Schema({
   date: {
     type: Date,
+    default: Date.now, // Automatically set to current date and time
     required: true,
   },
   patient: {
@@ -24,17 +25,19 @@ const billingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Service: {
-    type: Object,
-    default: {}
+  services: {
+    type: Array,
+    default: []
   },
   total: {
     type: Number,
+    default: 0,
     required: true,
     min: 0,
   },
   paid: {
     type: Number,
+    default: 0,
     required: true,
     min: 0,
   },

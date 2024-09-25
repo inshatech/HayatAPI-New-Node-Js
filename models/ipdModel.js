@@ -5,7 +5,6 @@ const User = require('./userModel');
 const ipdSchema = new mongoose.Schema({
   srNo: {
     type: String,
-    required: true,
   },
   doa: {
     type: Date,
@@ -25,14 +24,10 @@ const ipdSchema = new mongoose.Schema({
   },
   dod: {
     type: Date,
-    required: true,
   },
   is_admitted: {
     type: Boolean,
     default: true
-  },
-  notes:{
-    type: String,
   },
   staff: {
     type: mongoose.Schema.Types.ObjectId,

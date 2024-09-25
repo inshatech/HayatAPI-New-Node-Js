@@ -14,7 +14,7 @@ const opdRouter = require('./routes/opdRouter.js');
 const whatsAppRouter = require('./routes/whatsAppRouter.js');
 const bedHistoryRouter = require('./routes/bedHistoryRouter.js');
 const ipdRouter = require('./routes/ipdRouter.js');
-const billingRouter = require('./routes/ipdRouter.js');
+const billingRouter = require('./routes/billingRouter.js');
 
 // Configuration
 dotenv.config();
