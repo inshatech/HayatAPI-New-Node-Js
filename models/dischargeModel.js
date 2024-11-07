@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const Patient = require('./patientModel');
 const User = require('./userModel');
+const Bed = require('./bedModel');
 
 const dischargeSchema = new mongoose.Schema({
   srNo: {
-    type: String,
-    required: true,
+    type: Number, // Changed to Number for easier incrementing
   },
   date: {
     type: Date,
@@ -24,8 +24,9 @@ const dischargeSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  bed:{
-    type: String,
+  bed: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Bed',
     required: true,
   },
   tod: {
@@ -52,7 +53,7 @@ const dischargeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  notes:{
+  notes: {
     type: String,
   },
   staff: {
@@ -65,6 +66,15 @@ const dischargeSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+}, { timestamps: true });
+
+// Pre-save hook to set srNo
+dischargeSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    const lastDischarge = await Discharge.findOne({}, { srNo: 1 }).sort({ srNo: -1 });
+    this.srNo = lastDischarge ? lastDischarge.srNo + 1 : 1; // Start with 1 if no records exist
+  }
+  next();
 });
 
 const Discharge = mongoose.model('Discharge', dischargeSchema);

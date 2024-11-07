@@ -9,11 +9,14 @@ const fitnessRouter = express.Router();
 // Create a new fitness record
 fitnessRouter.post('/fitness', TokenAuthentication, validateCreateFitness, validate,  fitnessController.createFitnessRecord);
 
+// Search fitness records
+fitnessRouter.get('/fitness', TokenAuthentication, fitnessController.searchFitness);
+
 // Get a single fitness record by ID
-fitnessRouter.get('/fitness/:id', TokenAuthentication, validateById, validate, fitnessController.getFitnessRecord);
+fitnessRouter.get('/fitness/single/:id', TokenAuthentication, validateById, validate, fitnessController.getFitnessRecord);
 
 // Get all fitness records (with optional query filters)
-fitnessRouter.get('/fitness', TokenAuthentication, fitnessController.getAllFitnessRecords);
+fitnessRouter.get('/fitness/all', TokenAuthentication, fitnessController.getAllFitnessRecords);
 
 // Update a fitness record by ID
 fitnessRouter.put('/fitness/:id', TokenAuthentication, validateById, validate, fitnessController.updateFitnessRecord);

@@ -24,4 +24,7 @@ ipdRouter.delete('/ipd/:id', TokenAuthentication, validateById, validate, ipdCon
 // Update multiple ipd records
 ipdRouter.put('/ipd', TokenAuthentication, ipdController.updateMultipleIPDRecords);
 
+//Switch bed
+ipdRouter.patch('/ipd/:id', TokenAuthentication, validateById, validate, ipdController.switchBed);
+
 module.exports = ipdRouter;

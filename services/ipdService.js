@@ -4,9 +4,28 @@ const create = async (query) => {
   try {
     const addIPD = new IPD(query);
     let response = await addIPD.save();
-    response = await IPD.findById(response._id).populate('patient');
+
+    response = await IPD.findById(response._id)
+      .populate('patient')
+      .populate({
+        path: 'doctor',
+        select: 'name',
+      }).populate({
+        'path': 'staff',
+        select: 'name',
+      }).populate({
+        'path': 'bed',
+        select: 'name',
+      }).populate({
+        'path': 'bedHistory',
+        populate: {
+          path: 'bed', // Populate the bed field in bedHistory
+          select: 'name' // Select the name field of the bed
+        }
+      });
     return { success: true, message: 'Record created successfully', data: response };
   } catch (error) {
+    console.log(error)
     return { success: false, message: error.message };
   }
 };
@@ -14,7 +33,24 @@ const create = async (query) => {
 
 const findOne = async (query) => {
   try {
-    const response = await IPD.findOne(query).populate('patient');
+    const response = await IPD.findOne(query)
+      .populate('patient')
+      .populate({
+        path: 'doctor',
+        select: 'name',
+      }).populate({
+        'path': 'staff',
+        select: 'name',
+      }).populate({
+        'path': 'bed',
+        select: 'name',
+      }).populate({
+        'path': 'bedHistory',
+        populate: {
+          path: 'bed', // Populate the bed field in bedHistory
+          select: 'name' // Select the name field of the bed
+        }
+      });
     if (!response) {
       return { success: false, message: 'Record not found' };
     }
@@ -26,7 +62,71 @@ const findOne = async (query) => {
 
 const findAll = async (query) => {
   try {
-    const response = await IPD.find(query).populate('patient');
+    let dateFilter = {};
+
+    // Check for single date search
+    if (query.singleDate) {
+      const singleDate = new Date(query.singleDate);
+
+      // Validate the single date
+      if (isNaN(singleDate.getTime())) {
+        return { success: false, message: "Invalid date format" };
+      }
+
+      // Adjust singleDate to the start and end of the day
+      const startOfDay = new Date(singleDate.setHours(0, 0, 0, 0));
+      const endOfDay = new Date(singleDate.setHours(23, 59, 59, 999));
+
+      dateFilter.doa = {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      };
+
+      delete query.singleDate; // Remove the singleDate from the query
+    }
+
+    // Check for date range search
+    if (query.startDate && query.endDate) {
+      const startDate = new Date(query.startDate);
+      const endDate = new Date(query.endDate);
+
+      // Validate the start and end dates
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        return { success: false, message: "Invalid date format" };
+      }
+
+      // Adjust endDate to the end of the day
+      endDate.setHours(23, 59, 59, 999);
+
+      dateFilter.doa = {
+        ...(dateFilter.doa || {}), // Merge with existing dateFilter
+        $gte: startDate,
+        $lte: endDate,
+      };
+
+      delete query.startDate; // Remove the startDate from the query
+      delete query.endDate;   // Remove the endDate from the query
+    }
+
+    const finalQuery = { ...query, ...dateFilter };
+    const response = await IPD.find(finalQuery)
+      .populate('patient')
+      .populate({
+        path: 'doctor',
+        select: 'name',
+      }).populate({
+        'path': 'staff',
+        select: 'name',
+      }).populate({
+        'path': 'bed',
+        select: 'name',
+      }).populate({
+        'path': 'bedHistory',
+        populate: {
+          path: 'bed', // Populate the bed field in bedHistory
+          select: 'name' // Select the name field of the bed
+        }
+      });
     if (response.length === 0) {
       return { success: false, message: "Record not found" };
     }
@@ -56,7 +156,23 @@ const findByIdAndDelete = async (query) => {
 
 const findOneAndUpdate = async (_id, query) => {
   try {
-    const response = await IPD.findOneAndUpdate({ _id }, query, { new: true });
+    const response = await IPD.findOneAndUpdate({ _id }, query, { new: true }).populate('patient')
+    .populate({
+      path: 'doctor',
+      select: 'name',
+    }).populate({
+      'path': 'staff',
+      select: 'name',
+    }).populate({
+      'path': 'bed',
+      select: 'name',
+    }).populate({
+      'path': 'bedHistory',
+      populate: {
+        path: 'bed', // Populate the bed field in bedHistory
+        select: 'name' // Select the name field of the bed
+      }
+    });
     if (!response) {
       return { success: false, message: 'Record not found' };
     }
@@ -68,7 +184,23 @@ const findOneAndUpdate = async (_id, query) => {
 
 const updateMany = async (where, query) => {
   try {
-    const response = await IPD.updateMany(where, query);
+    const response = await IPD.updateMany(where, query).populate('patient')
+    .populate({
+      path: 'doctor',
+      select: 'name',
+    }).populate({
+      'path': 'staff',
+      select: 'name',
+    }).populate({
+      'path': 'bed',
+      select: 'name',
+    }).populate({
+      'path': 'bedHistory',
+      populate: {
+        path: 'bed', // Populate the bed field in bedHistory
+        select: 'name' // Select the name field of the bed
+      }
+    });
     return { success: true, message: 'Records updated successfully', data: response };
   } catch (error) {
     return { success: false, message: error.message };

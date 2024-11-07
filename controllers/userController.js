@@ -26,7 +26,7 @@ const createUserRecord = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -44,11 +44,8 @@ const loginUser = async (req, res) => {
     if (!user.isActive) {
       return res.status(400).json({ success: false, message: `Your account has been temporarily suspended or disabled.` });
     }
-    console.log(query.password, user.password);
     //3 Checking valid password
     const isValidPassword = await passwordValidation(query.password, user.password);
-    console.log(user.password)
-    console.log(isValidPassword)
     if (!isValidPassword) {
       return res.status(400).json({ success: false, message: `Please check your login credentials and try again.` });
     }
@@ -66,6 +63,9 @@ const loginUser = async (req, res) => {
       const message = await otpTemplate(OTP);
       await whatsApp.send(query.mobile, message, user.name)
 
+      user = user.toObject();
+      delete user.password; // Ensure password is not returned
+
       res.status(200).json({
         success: true,
         message: 'Login successfully',
@@ -75,10 +75,8 @@ const loginUser = async (req, res) => {
       });
 
     }
-
-
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -118,7 +116,7 @@ const resetPassword = async (req, res) => {
     }
 
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -132,7 +130,7 @@ const getUserRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -146,7 +144,7 @@ const getAllUserRecords = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -161,7 +159,7 @@ const updateUserRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -175,7 +173,7 @@ const deleteUserRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -190,7 +188,7 @@ const updateMultipleUserRecords = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 

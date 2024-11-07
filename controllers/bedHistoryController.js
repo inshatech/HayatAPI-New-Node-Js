@@ -10,7 +10,7 @@ const createBedHistoryRecord = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -24,7 +24,7 @@ const getBedHistoryRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -34,7 +34,7 @@ const getAllBedHistoryRecords = async (req, res) => {
     const result = await bedHistoryService.findAll(query);
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -50,7 +50,7 @@ const updateBedHistoryRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -64,7 +64,7 @@ const deleteBedHistoryRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -79,7 +79,7 @@ const updateMultipleBedHistoryRecords = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 

@@ -10,9 +10,26 @@ const createPatientRecord = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
+
+const searchPatients = async (req, res) => {
+  try {
+    const { search } = req.query;
+    const patients = await patientService.findAll({
+      $or: [
+        { name: { $regex: search, $options: 'i' } },
+        { mobile: { $regex: search, $options: 'i' } },
+        { uhid: { $regex: search, $options: 'i' } },
+      ],
+    });
+
+    res.json(patients);
+  } catch (error) {
+    return res.status(404).json({ success: false, message: error.message });
+  }
+};
 
 const getPatientRecord = async (req, res) => {
   try {
@@ -24,7 +41,7 @@ const getPatientRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -38,7 +55,7 @@ const getAllPatientRecords = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -53,7 +70,7 @@ const updatePatientRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -67,7 +84,7 @@ const deletePatientRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -82,7 +99,7 @@ const updateMultiplePatientRecords = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -92,5 +109,6 @@ module.exports = {
   getAllPatientRecords,
   updatePatientRecord,
   deletePatientRecord,
-  updateMultiplePatientRecords
+  updateMultiplePatientRecords,
+  searchPatients
 }

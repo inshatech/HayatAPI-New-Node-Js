@@ -8,8 +8,14 @@ const opdSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now, // Automatically set to current date and time
     required: true,
+    validate: {
+      validator: function (value) {
+        return !isNaN(value.getTime());
+      },
+      message: 'Invalid date format. Please provide a valid date.',
+    },
+    default: Date.now,
   },
   patient: {
     type: mongoose.Schema.Types.ObjectId,
@@ -17,54 +23,40 @@ const opdSchema = new mongoose.Schema({
     required: true,
   },
   services: {
-    type: Array,
-    default: {}
+    type: Object,
+    default: {},
   },
-  complaints: {
-    type: String,
-  },
-  history: {
-    type: String,
-  },
-  diagnosis: {
-    type: String,
-  },
+  complaints: String,
+  history: String,
+  diagnosis: String,
   vitals: {
     type: Object,
-    default: {}
+    default: {},
   },
-  examination: {
-    type: String,
-  },
+  examination: String,
   medicine: {
     type: Object,
-    default: {}
+    default: {},
   },
-  advise: {
-    type: String,
-  },
-  next_visit: {
-    type: Date,
-  },
+  advise: String,
+  next_visit: Date,
   transaction_type: {
     type: String,
     enum: ['cash', 'online'],
     default: 'cash',
-    required: true
+    required: true,
   },
   payment_status: {
     type: String,
     enum: ['paid', 'refunded'],
     default: 'paid',
-    required: true
+    required: true,
   },
   total_amount: {
     type: Number,
     required: true,
   },
-  notes: {
-    type: String,
-  },
+  notes: String,
   staff: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -75,27 +67,21 @@ const opdSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-},
-  {
-    timestamps: true
-  }
-);
+}, { timestamps: true });
 
 // Pre-save hook to set the `srNo`
 opdSchema.pre('save', async function (next) {
-  const opd = this;
-  const startOfDay = new Date(opd.date.setHours(0, 0, 0, 0));
+  // Normalize date to remove time part for comparison
+  const startOfDay = new Date(this.date);
+  startOfDay.setHours(0, 0, 0, 0);
 
-  // Find the last entry of the day
+  // Find the last OPD record for the same date
   const lastOpd = await mongoose.model('OPD').findOne({
-    date: { $gte: startOfDay }
+    date: { $gte: startOfDay, $lt: new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000) }
   }).sort({ srNo: -1 });
 
-  if (lastOpd) {
-    opd.srNo = lastOpd.srNo + 1;
-  } else {
-    opd.srNo = 1;
-  }
+  // Increment srNo or set to 1 if no records exist for that day
+  this.srNo = lastOpd ? lastOpd.srNo + 1 : 1;
 
   next();
 });

@@ -7,10 +7,10 @@ const createBedRecord = async (req, res) => {
     if (result.success) {
       return res.status(201).json(result);
     } else {
-      return res.status(400).json(result);
+      return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -24,7 +24,7 @@ const getBedRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -34,7 +34,7 @@ const getAllBedRecords = async (req, res) => {
     const result = await bedService.findAll(query);
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -50,7 +50,7 @@ const updateBedRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -64,7 +64,7 @@ const deleteBedRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -79,7 +79,7 @@ const updateMultipleBedRecords = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 

@@ -1,7 +1,6 @@
 const { body, param, query } = require('express-validator');
 
 const validateCreateIPD = [
-  body('srNo').notEmpty().withMessage('Sr. No. is required'),
   body('doa').notEmpty().withMessage('Date time of admission is required'),
   body('bed').notEmpty().withMessage('Bed No. is required'),
   body('staff').notEmpty().withMessage('Staff id is required'),

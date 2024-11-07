@@ -9,11 +9,14 @@ const dischargeRouter = express.Router();
 // Create a new discharge record
 dischargeRouter.post('/discharge', TokenAuthentication, validateCreateDischarge, validate, dischargeController.createDischargeRecord);
 
+// Search discharge records
+dischargeRouter.get('/discharge', TokenAuthentication, dischargeController.searchDischarge);
+
 // Get a single discharge record by ID
-dischargeRouter.get('/discharge/:id', TokenAuthentication, validateById, validate, dischargeController.getDischargeRecord);
+dischargeRouter.get('/discharge/single/:id', TokenAuthentication, validateById, validate, dischargeController.getDischargeRecord);
 
 // Get all discharge records (with optional query filters)
-dischargeRouter.get('/discharge', TokenAuthentication, dischargeController.getAllDischargeRecords);
+dischargeRouter.get('/discharge/all', TokenAuthentication, dischargeController.getAllDischargeRecords);
 
 // Update a discharge record by ID
 dischargeRouter.put('/discharge/:id', TokenAuthentication, validateById, validate, dischargeController.updateDischargeRecord);

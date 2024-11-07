@@ -15,6 +15,8 @@ const whatsAppRouter = require('./routes/whatsAppRouter.js');
 const bedHistoryRouter = require('./routes/bedHistoryRouter.js');
 const ipdRouter = require('./routes/ipdRouter.js');
 const billingRouter = require('./routes/billingRouter.js');
+const path = require('path');
+const scalpRouter = require('./routes/scalpRouter.js');
 
 // Configuration
 dotenv.config();
@@ -34,19 +36,20 @@ app.use(helmet());
 // IP-based Access Control
 const allowedIPs = ['127.0.0.1', '::1']; // Include other trusted IPs
 
-app.use((req, res, next) => {
-  const clientIP = req.ip;
-  if (!allowedIPs.includes(clientIP)) {
-    return res.status(403).json({ success: false, message: 'Access denied' });
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   const clientIP = req.ip;
+//   if (!allowedIPs.includes(clientIP)) {
+//     return res.status(403).json({ success: false, message: 'Access denied' });
+//   }
+//   next();
+// });
 
-// CORS Setup with Environment Variables
-const allowedDomains = ['*'];
+const allowedDomains = ['http://localhost:5173', 'http://localhost:3000/']; // Hardcoded for testing
+
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedDomains.indexOf(origin) !== -1) {
+    if ('*') return callback(null, true); // Allow Postman, mobile, etc.
+    if (allowedDomains.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -54,6 +57,7 @@ const corsOptions = {
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 };
+
 
 app.use(cors(corsOptions));
 
@@ -64,7 +68,6 @@ app.use(morgan('combined')); // or use 'dev' for concise logs during development
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
 app.use('/back-office', bedRouter);
 app.use('/back-office', dischargeRouter);
 app.use('/back-office', fitnessRouter);
@@ -75,6 +78,8 @@ app.use('/back-office', opdRouter);
 app.use('/back-office', ipdRouter);
 app.use('/back-office', billingRouter);
 app.use('/back-office', bedHistoryRouter);
+app.use('/back-office', scalpRouter);
+
 
 app.use('/back-office', whatsAppRouter);
 
@@ -86,7 +91,7 @@ app.use((req, res, next) => {
 // Global error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ success: false, message: 'Internal Server Error' });
+  res.status(404).json({ success: false, message: 'Internal Server Error' });
 });
 
 // Start Server

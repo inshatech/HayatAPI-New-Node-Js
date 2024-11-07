@@ -57,7 +57,7 @@ const fitnessSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-});
+}, { timestamps: true });
 
 const Fitness = mongoose.model('Fitness', fitnessSchema);
 

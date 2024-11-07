@@ -1,6 +1,8 @@
 const ipdService = require('../services/ipdService');
 const patientService = require('../services/patientService');
 const userService = require('../services/userService');
+const bedService = require("../services/bedService");
+
 
 const createIPDRecord = async (req, res) => {
   try {
@@ -38,7 +40,6 @@ const createIPDRecord = async (req, res) => {
         city,
         doctor
       };
-      console.log(newPatient)
       const patientCreationResponse = await patientService.create(newPatient);
       if (!patientCreationResponse.success) {
         return res.status(400).json({ success: false, message: 'Failed to register patient' });
@@ -50,6 +51,9 @@ const createIPDRecord = async (req, res) => {
     // Create new IPD record
     const ipdResponse = await ipdService.create(req.body);
     if (ipdResponse.success) {
+      const bed_id = ipdResponse.data.bed;
+      const bedQuery = { isOccupied: true };
+      const setBedStatus = await bedService.findOneAndUpdate(bed_id, bedQuery);
       return res.status(201).json(ipdResponse);
     } else {
       return res.status(400).json({ success: false, message: 'Failed to create IPD record' });
@@ -57,11 +61,40 @@ const createIPDRecord = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    return res.status(404).json({ success: false, message: 'Internal server error' });
   }
 };
 
-
+const switchBed = async (req, res) => {
+  try {
+    const _id = req.params.id; // Assuming the ID is passed as a URL parameter
+    const query = req.body;
+    const checkBedByPatient = await ipdService.findOne({ bed: query.bed });
+    let response;
+    if (checkBedByPatient.success) {
+      const task1 = await ipdService.findOneAndUpdate(checkBedByPatient.data._id, { bed: query.old_bed });
+      const task2 = await ipdService.findOneAndUpdate(_id, { bed: query.bed });
+      if (task1.success && task2.success) {
+        response = { success: true, message: 'Bed switched successfully', data: [task1.data, task2.data] };
+      } else {
+        return res.status(400).json({ success: false, message: 'Failed to switch bed' });
+      }
+    } else {
+      const task1 = await ipdService.findOneAndUpdate(_id, { bed: query.bed });
+      const task2 = await bedService.findOneAndUpdate(query.bed, { isOccupied: true });
+      const task3 = await bedService.findOneAndUpdate(query.old_bed, { isOccupied: false });
+      if (task1.success && task2.success && task3.success) {
+        response = { success: true, message: 'Bed switched successfully', data: task1.data };
+      } else {
+        return res.status(400).json({ success: false, message: 'Failed to switch bed' });
+      }
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error)
+    return res.status(404).json({ success: false, message: error.message });
+  }
+}
 const getIPDRecord = async (req, res) => {
   try {
     const query = req.params.id; // Assuming you use params to identify the ipd record
@@ -72,7 +105,7 @@ const getIPDRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -86,7 +119,7 @@ const getAllIPDRecords = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -101,7 +134,7 @@ const updateIPDRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -115,7 +148,7 @@ const deleteIPDRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -130,7 +163,7 @@ const updateMultipleIPDRecords = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -140,5 +173,6 @@ module.exports = {
   getAllIPDRecords,
   updateIPDRecord,
   deleteIPDRecord,
-  updateMultipleIPDRecords
+  updateMultipleIPDRecords,
+  switchBed
 }

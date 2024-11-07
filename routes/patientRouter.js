@@ -9,11 +9,14 @@ const patientRouter = express.Router();
 // Create a new patient record
 patientRouter.post('/patient', TokenAuthentication, validateCreatePatient, validate, patientController.createPatientRecord);
 
+// Search patient records
+patientRouter.get('/patient', TokenAuthentication, patientController.searchPatients);
+
 // Get a single patient record by ID
-patientRouter.get('/patient/:id', TokenAuthentication, validateById, validate, patientController.getPatientRecord);
+patientRouter.get('/patient/single/:id', TokenAuthentication, validateById, validate, patientController.getPatientRecord);
 
 // Get all patient records (with optional query filters)
-patientRouter.get('/patient', TokenAuthentication, patientController.getAllPatientRecords);
+patientRouter.get('/patient/all', TokenAuthentication, patientController.getAllPatientRecords);
 
 // Update a patient record by ID
 patientRouter.put('/patient/:id', TokenAuthentication, validateById, validate, patientController.updatePatientRecord);

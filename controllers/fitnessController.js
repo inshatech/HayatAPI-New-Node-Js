@@ -10,9 +10,26 @@ const createFitnessRecord = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
+
+const searchFitness = async (req, res) => {
+  try {
+    const { search } = req.query;
+    const patients = await fitnessService.findAll({
+      $or: [
+        { referer: { $regex: search, $options: 'i' } },
+        { postedFor: { $regex: search, $options: 'i' } },
+        { opinion: { $regex: search, $options: 'i' } },
+      ],
+    });
+
+    res.json(patients);
+  } catch (error) {
+    return res.status(404).json({ success: false, message: error.message });
+  }
+};
 
 const getFitnessRecord = async (req, res) => {
   try {
@@ -24,7 +41,7 @@ const getFitnessRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -34,7 +51,7 @@ const getAllFitnessRecords = async (req, res) => {
     const result = await fitnessService.findAll(query);
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -49,7 +66,7 @@ const updateFitnessRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -63,7 +80,7 @@ const deleteFitnessRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -78,7 +95,7 @@ const updateMultipleFitnessRecords = async (req, res) => {
       return res.status(400).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(404).json({ success: false, message: error.message });
   }
 }
 
@@ -88,5 +105,6 @@ module.exports = {
   getAllFitnessRecords,
   updateFitnessRecord,
   deleteFitnessRecord,
-  updateMultipleFitnessRecords
+  updateMultipleFitnessRecords,
+  searchFitness
 }

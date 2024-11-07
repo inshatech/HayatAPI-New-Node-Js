@@ -1,54 +1,6 @@
 const opdService = require('../services/opdService');
 const patientService = require('../services/patientService');
 const userService = require('../services/userService');
-// const createOPDRecord = async (req, res) => {
-//   try {
-//     const query = req.body;
-
-//     // Check Doctor
-//     const doctorResponse = await userService.findOne({ _id: query.doctor });
-//     const existingUser = doctorResponse.data
-//     if (!existingUser || !existingUser.designation || existingUser.designation !== 'doctor') {
-//       return res.status(400).json({ success: false, message: 'Please select doctor and try again' });
-//     }
-
-//     // Checking patient id is available??
-//     if (!query.patient) {
-
-//       // Check patient is already available??
-//       const patientResponse = await patientService.findOne({ mobile: query.mobile, doctor: query.doctor });
-//       const existingPatient = patientResponse.data;
-//       if (existingPatient) {
-//         return res.status(400).json({ success: false, message: 'Patient is already registered' });
-//       }
-
-//       // Declare the patient Information
-//       const patient = {
-//         name: query.name,
-//         mobile: query.mobile,
-//         age: query.age,
-//         sex: query.sex,
-//         city: query.city,
-//         doctor: query.doctor
-//       }
-
-//       // Add new patient;
-//       const response = await patientService.create(patient);
-//       console.log(response)
-//       query.patient = response.data._id;
-//     }
-
-//     // Add new OPD
-//     const result = await opdService.create(query);
-//     if (result.success) {
-//       return res.status(201).json(result);
-//     } else {
-//       return res.status(400).json(result);
-//     }
-//   } catch (error) {
-//     return res.status(500).json({ success: false, message: error.message });
-//   }
-// }
 
 const createOPDRecord = async (req, res) => {
   try {
@@ -59,7 +11,7 @@ const createOPDRecord = async (req, res) => {
     const existingUser = doctorResponse?.data;
 
     if (!existingUser || existingUser.designation !== 'doctor') {
-      return res.status(400).json({ success: false, message: 'Invalid doctor selected' });
+      return res.status(200).json({ success: false, message: 'Invalid doctor selected' });
     }
 
     // If patient is not provided, check if the patient is already registered
@@ -67,14 +19,14 @@ const createOPDRecord = async (req, res) => {
 
       // Check if required fields are present
       if (!doctor || !mobile || !name || !age || !sex || !city) {
-        return res.status(400).json({ success: false, message: 'Missing required fields' });
+        return res.status(200).json({ success: false, message: 'Missing required fields' });
       }
 
       const patientResponse = await patientService.findOne({ mobile, doctor });
       const existingPatient = patientResponse?.data;
 
       if (existingPatient) {
-        return res.status(400).json({ success: false, message: 'Patient is already registered with this doctor' });
+        return res.status(200).json({ success: false, message: 'Patient is already registered with this doctor' });
       }
 
       // Register a new patient
@@ -86,10 +38,9 @@ const createOPDRecord = async (req, res) => {
         city,
         doctor
       };
-      console.log(newPatient)
       const patientCreationResponse = await patientService.create(newPatient);
       if (!patientCreationResponse.success) {
-        return res.status(400).json({ success: false, message: 'Failed to register patient' });
+        return res.status(200).json({ success: false, message: 'Failed to register patient' });
       }
 
       req.body.patient = patientCreationResponse.data._id;
@@ -100,15 +51,14 @@ const createOPDRecord = async (req, res) => {
     if (opdResponse.success) {
       return res.status(201).json(opdResponse);
     } else {
-      return res.status(400).json({ success: false, message: 'Failed to create OPD record' });
+      return res.status(200).json({ success: false, message: 'Failed to create OPD record' });
     }
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    return res.status(200).json({ success: false, message: 'Internal server error' });
   }
 };
-
 
 const getOPDRecord = async (req, res) => {
   try {
@@ -120,23 +70,24 @@ const getOPDRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(200).json({ success: false, message: error.message });
   }
 }
 
 const getAllOPDRecords = async (req, res) => {
   try {
-    const query = req.query; // Assuming query parameters for filtering
-    const result = await opdService.findAll(query);
+    let query = req.query; // Get query parameters for filtering
+    const result = await opdService.findAll(query); // Use the final query
     if (result.success) {
       return res.status(200).json(result);
     } else {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(200).json({ success: false, message: error.message });
   }
-}
+};
+
 
 const updateOPDRecord = async (req, res) => {
   try {
@@ -149,7 +100,7 @@ const updateOPDRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(200).json({ success: false, message: error.message });
   }
 }
 
@@ -163,7 +114,7 @@ const deleteOPDRecord = async (req, res) => {
       return res.status(404).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(200).json({ success: false, message: error.message });
   }
 }
 
@@ -175,10 +126,10 @@ const updateMultipleOPDRecords = async (req, res) => {
     if (result.success) {
       return res.status(200).json(result);
     } else {
-      return res.status(400).json(result);
+      return res.status(200).json(result);
     }
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(200).json({ success: false, message: error.message });
   }
 }
 
